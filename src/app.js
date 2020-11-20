@@ -56,7 +56,7 @@ app.setHandler({
 
         //return this.toIntent('HelloWorldIntent');
         //this.tell(`${data.nickname}, ${data.email}`);
-        this.ask('Olá '+ data.nickname + ' em que posso ajudar?', 'Você pode perguntar sobre o seu consumo corrente, por exemplo');
+        this.ask('Olá, bem-vindo ao seu Consumo de Energia. Em que posso ajudar?', 'Você pode perguntar sobre o seu consumo corrente, por exemplo');
     }
   },
 
@@ -72,17 +72,137 @@ app.setHandler({
     console.log('Entrou na intent CurrentConsumptionIntent --------');
     var userId = this.$session.$data.userid;
     console.log('user id' + userId);
-    const moaciReq = await getCurrentConsumption(userId);
-    console.log('Request response '+moaciReq);
-    this.tell('O seu consumo atual é de ' + moaciReq + " de energia");
+    var currentConsumption = await getCurrentConsumption(userId);
+    console.log('Request response '+currentConsumption);
+    if (currentConsumption == null || currentConsumption == 0 || currentConsumption == '') {
+      this.tell('Ainda não foi possível coletar informações do seu consumo de energia. Tente me perguntar de novo daqui a uma hora');  
+    } else {
+      this.tell('O seu consumo atual desse mês é de ' + currentConsumption + ' watts de energia');
+    }
   },
 
+  async CurrentConsumptionValueIntent() {
+    console.log('Entrou na intent CurrentConsumptionIntent --------');
+    var userId = this.$session.$data.userid;
+    console.log('user id' + userId);
+    var currentConsumption = await getCurrentConsumptionInValue(userId);
+    console.log('Request response '+currentConsumption);
+    if (currentConsumption == null || currentConsumption == 0 || currentConsumption == '') {
+      this.tell('Ainda não foi possível coletar informações do seu consumo de energia. Tente me perguntar de novo daqui a uma hora');  
+    } else {
+      this.tell('Segundo meus cálculos, você já gastou aproximadamente' + currentConsumption + ' reais de energia esse mês');
+    }
+  },
+
+  async CurrentDevicesOnIntent() {
+    this.$session.$data.devices = null;
+    console.log('Entrou na intent CurrentDevicesOnIntent');
+    let reprompt = 'Gostaria de saber quais outros aparelhos que estão ligados?';
+  
+    var userId = this.$session.$data.userid;
+
+    var response = await getDevicesTurnOn(userId);
+
+    console.log('mock data');
+    console.log(response);
+
+    if (response == null || response.devices.length == 0) {
+        this.tell('Não foi possível encontrar aparelhos ligados no momento');
+
+    } else {
+      if (response.devices.length > 5) {
+        let devices = getDevicesByPosition(response.devices, 0, 5);
+        this.$session.$data.devices = response.devices;
+        this.$session.$data.position = 5;
+
+        this.followUpState('CurrentDevicesOnState')
+        .ask('Estão ligado no momento '+devices + ' .Gostaria de ouvir mais?', reprompt);
+      } else {
+        let devices = getDevicesByPosition(response.devices, 0, response.devices.length);
+          this.tell('Estão ligado no momento '+devices + '.');
+      }
+    }
+  },
+
+  CurrentDevicesOnState: {
+    YesIntent() {
+        var currentPos = this.$session.$data.position;
+        var devices = this.$session.$data.devices;
+        var endPos = currentPos + 5;
+
+        if (endPos >= devices.length) {
+          endPos = devices.length;
+          let response = getDevicesByPosition(devices, currentPos, endPos);
+          
+          this.tell('Por fim, os últimos aparelhos ligados são '+response);
+          
+          this.$session.$data.devices = null;
+          this.$session.$data.position = 0;
+
+        } else {
+          let response = getDevicesByPosition(devices, currentPos, endPos);
+          this.$session.$data.position = endPos;
+          
+          this.followUpState('CurrentDevicesOnState')
+              .ask('Também estão ligados '+response + ' .Gostaria de ouvir mais?', 'Gostaria de saber quais outros aparelhos estão ligados?');
+        }
+    },
+    NoIntent() {
+        this.$session.$data.devices = null;
+        this.$session.$data.position = 0;
+        this.tell('Tudo bem, até logo');
+    },
+    Unhandled() {
+      this.followUpState('CurrentDevicesOnState')
+                .ask('Você deve dizer sim ou não.', 'Por favor, diga sim ou não');
+    }
+  },
+
+  // Unhandled() {
+  //   return this.toIntent('LAUNCH');
+  // }
+
 });
+
+function getDevicesByPosition(devices, startPos, endPos) {
+    var response = '';
+    if (startPos >= 0 && startPos < endPos) {
+      for (var pos = startPos; pos < endPos; pos++) {
+        if (pos == startPos) {
+          response = devices[pos].device;  
+        } else if (pos == endPos - 1) {
+          response += ' e ' + devices[pos].device;  
+        } else {
+          response += ', ' + devices[pos].device;
+        }
+      }
+    }
+
+    console.log('response '+ response);
+
+    return response;
+}
 
 async function getCurrentConsumption(userId) {
   console.log('Current path ' + REQUEST_PATH);
   console.log('user id for request ' + userId);
   console.log(REQUEST_PATH + '/alexa/'+userId+'/consumption/now')
+  const options = {
+    uri: REQUEST_PATH + '/alexa/'+userId+'/consumption/now',
+    json: true
+  };
+  const data = await requestPromise(options);
+
+  return data.home_consumption;
+}
+
+async function getCurrentConsumptionInValue(userId) {
+  console.log('Current path ' + REQUEST_PATH);
+  console.log('user id for request ' + userId);
+  console.log(REQUEST_PATH + '/alexa/'+userId+'/consumption/now')
+
+  /**TODO implement the right request*/
+
   const options = {
     uri: REQUEST_PATH + '/alexa/'+userId+'/consumption/now',
     json: true
@@ -99,7 +219,23 @@ async function getDevicesTurnOn(userId) {
   };
   const data = await requestPromise(options);
 
-  return data.home_appliance;
+  var mockData = {"devices":[ { "device": "geladeira"},
+                              { "device": "tv"},
+                              { "device": "computador"},
+                              { "device": "máquina de lavar"},
+                              { "device": "tv"},
+                              { "device": "refrigerador"},
+                              { "device": "abajur"},
+                              { "device": "escova elétrica"},
+                              { "device": "abajur 2"},
+                              { "device": "barbeador"},
+                              { "device": "modem de internet"},
+                              { "device": "vídeo game"},
+                              { "device": "tv 3"},
+                              { "device": "máquina"}
+                            ]};
+
+  return mockData;
 }
 
 async function getDeviceMaxConsumption(userId) {

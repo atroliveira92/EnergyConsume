@@ -8,8 +8,32 @@
     {
       "name": "CurrentConsumptionIntent",
       "phrases": [
-        "what is the current consume",
-        "current consume"
+        "what is my current consumption",
+        "my current consumption",
+        "what is my current energy consumption",
+        "my current energy consumption",
+        "what is my energy consumption currently",
+        "my energy consumption currently",
+        "what is my current consumption",
+        "my current consumption",
+        "what is my current energy consumption",
+        "what is my consumption now?",
+        "how much I already consumed that month of energy",
+        "how much I already consumed this month",
+        "how much I already consumed",
+        "current consumption"
+      ]
+    },
+    {
+      "name": "CurrentConsumptionValueIntent",
+      "phrases": [
+        "how much I spent",
+        "how much I already spent",
+        "how much I already spent this month",
+        "consumption in reais",
+        "my energy bill",
+        "my energy bill this month",
+        "my account this month"
       ]
     }
   ],

@@ -8,8 +8,44 @@
       {
         "name": "CurrentConsumptionIntent",
         "phrases": [
-          "qual o consumo atual do sistema",
-          "consumo atual"
+          "qual meu consumo atual",
+          "meu consumo atual",
+          "qual o meu consumo de energia atual",
+          "meu consumo de energia atual",
+          "qual o meu consumo de energia atualmente",
+          "meu consumo de energia atualmente",
+          "qual o meu consumo corrente",
+          "meu consumo corrente",
+          "qual o meu consumo de energia corrente",
+          "qual o meu consumo agora",
+          "consumo atual",
+          "me fale meu consumo atual",
+          "me fala o consumo atual"
+        ]
+      },
+      {
+        "name": "CurrentConsumptionValueIntent",
+        "phrases": [
+          "quanto gastei",
+          "quanto já gastei",
+          "quanto já gastei esse mês",
+          "quanto já gastei esse mês de energia",
+          "consumo em reais",
+          "minha conta de energia",
+          "minha conta de energia esse mês",
+          "minha conta esse mês",
+          "qual o valor da minha conta",
+          "qual o valor da minha conta esse mês"
+        ]
+      },
+      {
+        "name": "CurrentDevicesOnIntent",
+        "phrases": [
+          "quais aparelhos estão ligados",
+          "o que está ligado",
+          "me fale quais aparelhos estão ligados",
+          "qual dispositivo está ligado",
+          "quais dispositivos estão ligados"
         ]
       }
     ],
