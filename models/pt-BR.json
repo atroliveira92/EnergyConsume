@@ -47,6 +47,36 @@
           "qual dispositivo está ligado",
           "quais dispositivos estão ligados"
         ]
+      },
+      {
+        "name": "LastMonthSpentIntent",
+        "phrases": [
+          "gasto do mês passado",
+          "valor mês passado"
+        ]
+      },
+      {
+        "name": "NextMonthSpend",
+        "phrases": [
+          "quanto irei gastar de energia elétrica mês que vem",
+          "quanto vou gastar de energia elétrica mês que vem",
+          "quanto vou gastar de energia mês que vem",
+          "quanto vou gastar mês que vem",
+          "quanto vou gastar próximo mês",
+          "quanto irei gastar próximo mês",
+          "gasto do mês que vem",
+          "quanto irei gastar mês que vem"
+        ]
+      },
+      {
+        "name": "TipsIntent",
+        "phrases": [
+          "me fale dicas para diminuir meu consumo",
+          "me dê dicas para diminuir meu consumo",
+          "como posso diminuir meu consumo de energia",
+          "como posso diminuir meu consumo",
+          "como posso diminuir meu consumo de energia elétrica"
+        ]
       }
     ],
     "alexa": {

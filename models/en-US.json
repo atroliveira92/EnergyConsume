@@ -35,6 +35,41 @@
         "my energy bill this month",
         "my account this month"
       ]
+    },
+    {
+      "name": "CurrentDevicesOnIntent",
+      "phrases": [       
+        "which devices are connected",
+        "what is connected",
+        "tell me which devices are connected",
+        "which device is connected",
+        "which devices are connected"
+      ]
+    },
+    {
+      "name": "LastMonthSpentIntent",
+      "phrases": [    
+        "last month's spend",
+        "value last month"
+      ]
+    },
+    {
+      "name": "NextMonthSpend",
+      "phrases": [
+        "how much will I spend next month",
+        "next month's spend",
+        "how much will I spend next month"
+      ]
+    },
+    {
+      "name": "TipsIntent",
+      "phrases": [
+        "tell me tips to reduce my consumption",
+        "give me tips to reduce my consumption",
+        "how can I decrease my energy consumption",
+        "how can I decrease my consumption",
+        "how can I decrease my electricity consumption"
+      ]
     }
   ],
   "alexa": {

@@ -157,6 +157,30 @@ app.setHandler({
                 .ask('Você deve dizer sim ou não.', 'Por favor, diga sim ou não');
     }
   },
+  async LastMonthSpentIntent() {
+    var userId = this.$session.$data.userid;
+
+    var response = await getHowMuchSpentLastMonth(userId);
+    let value = '9';
+    this.tell('Mês passado você gastou aproximadamente '+ value + ' reais de energia elétrica');
+  },
+  async NextMonthSpend() {
+    var userId = this.$session.$data.userid;
+
+    var response = await getHowMuchSpendNextMonth(userId);
+    let value = '9';
+    this.tell('Segundo meus cálculos, você irá gastar aproximadamente '+ value + ' reais de energia elétrica');
+  },
+  async TipsIntent() {
+    var userId = this.$session.$data.userid;
+
+    var response = await getTipsForEnergyComsumption(userId);
+    if (response != null && response != '') {
+      this.tell(response);
+    } else {
+      this.ask('Houve um problema para carregar sua dica. Pode tentar novamente?', 'Pode perguntar novamente?');
+    }
+  }
 
   // Unhandled() {
   //   return this.toIntent('LAUNCH');
@@ -248,5 +272,36 @@ async function getDeviceMaxConsumption(userId) {
   return data.home_appliance;
 }
 
+async function getHowMuchSpentLastMonth(userId) {
+  const options = {
+    uri: REQUEST_PATH + '/alexa/'+ userId + '/home_appliance/max_consumption',
+    json: true
+  };
+  const data = await requestPromise(options);
+
+  return data.home_appliance;
+}
+
+async function getHowMuchSpendNextMonth(userId) {
+  const options = {
+    uri: REQUEST_PATH + '/alexa/'+ userId + '/home_appliance/max_consumption',
+    json: true
+  };
+  const data = await requestPromise(options);
+
+  return data.home_appliance;
+}
+
+async function getTipsForEnergyComsumption(userId) {
+  const options = {
+    uri: REQUEST_PATH + '/alexa/'+ userId + '/home_appliance/max_consumption',
+    json: true
+  };
+  const data = await requestPromise(options);
+
+  var mockValue = 'Você pode desligar sua máquina de lavar da tomada quando não estiver utilizando';
+  return mockValue;
+  //return data.home_appliance;
+}
 
 module.exports = { app };
