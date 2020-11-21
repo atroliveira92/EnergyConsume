@@ -50,9 +50,11 @@ app.setHandler({
         console.log('My log starts-----')
         console.log(data);
         console.log(token);
+        console.log(data['https://consumoenergia.com.br/metadata']);
+        let metadata = data['https://consumoenergia.com.br/metadata'];
+        console.log(metadata.user_id);
         console.log('My log finish-----')
-        this.$session.$data.nickname = data.nickname;
-        this.$session.$data.userid = 'user_b8c40def-b62d-4e8a-965a-43544f31b25c';
+        this.$session.$data.userid = metadata.user_id;
 
         //return this.toIntent('HelloWorldIntent');
         //this.tell(`${data.nickname}, ${data.email}`);
@@ -157,6 +159,7 @@ app.setHandler({
                 .ask('Você deve dizer sim ou não.', 'Por favor, diga sim ou não');
     }
   },
+
   async LastMonthSpentIntent() {
     var userId = this.$session.$data.userid;
 
@@ -164,6 +167,7 @@ app.setHandler({
     let value = '9';
     this.tell('Mês passado você gastou aproximadamente '+ value + ' reais de energia elétrica');
   },
+
   async NextMonthSpend() {
     var userId = this.$session.$data.userid;
 
@@ -171,6 +175,7 @@ app.setHandler({
     let value = '9';
     this.tell('Segundo meus cálculos, você irá gastar aproximadamente '+ value + ' reais de energia elétrica');
   },
+
   async TipsIntent() {
     var userId = this.$session.$data.userid;
 
@@ -180,8 +185,28 @@ app.setHandler({
     } else {
       this.ask('Houve um problema para carregar sua dica. Pode tentar novamente?', 'Pode perguntar novamente?');
     }
-  }
+  },
 
+  async DevicesConsumptionIntent() {
+    var userId = this.$session.$data.userid;
+
+    var response = await getDevicesTurnOn(userId);
+
+    if (response == null || response.devices.length == 0) {
+      this.tell('Não foi possível encontrar aparelhos ligados no momento');
+
+    } else {
+      var endPos = 5;
+      if (response.devices.length < 5) {
+        endPos = response.devices.length;
+      }
+
+      let devices = getDevicesByPosition(response.devices, 0, endPos);
+      
+      this.tell('Os aparelhos que mais gastam energia elétrica são ' + devices + '.');
+      
+    }
+  }
   // Unhandled() {
   //   return this.toIntent('LAUNCH');
   // }

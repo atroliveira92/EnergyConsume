@@ -1,5 +1,5 @@
 {
-  "invocation": "jovo test",
+  "invocation": "energy consumption",
   "intents": [
     {
       "name": "HelloWorldIntent",
@@ -69,6 +69,15 @@
         "how can I decrease my energy consumption",
         "how can I decrease my consumption",
         "how can I decrease my electricity consumption"
+      ]
+    },
+    {
+      "name": "DevicesConsumptionIntent",
+      "phrases": [
+        "tell me which devices spend the most",
+        "tell me the appliances that spend the most",
+        "devices that spend the most",
+        "which devices spend the most"
       ]
     }
   ],

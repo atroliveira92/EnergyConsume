@@ -77,6 +77,17 @@
           "como posso diminuir meu consumo",
           "como posso diminuir meu consumo de energia elétrica"
         ]
+      },
+      {
+        "name": "DevicesConsumptionIntent",
+        "phrases": [
+          "quais eletrodomésticos que mais gastam",
+          "eletrodomésticos que mais gastam",
+          "me fale quais aparelhos mais gastam",
+          "me fale os eletrodomésticos que mais gastam",
+          "aparelhos que mais gastam",
+          "quais aparelhos mais gastam"
+        ]
       }
     ],
     "alexa": {
