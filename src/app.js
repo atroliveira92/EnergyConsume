@@ -206,10 +206,11 @@ app.setHandler({
       this.tell('Os aparelhos que mais gastam energia elétrica são ' + devices + '.');
       
     }
+  },
+
+  Unhandled() {
+    this.ask('Não consegui compreender o que perguntou. Pode tentar novamente?', 'Pode repetir a pergunta?');
   }
-  // Unhandled() {
-  //   return this.toIntent('LAUNCH');
-  // }
 
 });
 
