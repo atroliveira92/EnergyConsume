@@ -55,9 +55,7 @@ app.setHandler({
         console.log(metadata.user_id);
         console.log('My log finish-----')
         this.$session.$data.userid = metadata.user_id;
-
-        //return this.toIntent('HelloWorldIntent');
-        //this.tell(`${data.nickname}, ${data.email}`);
+        
         this.ask('Olá, bem-vindo ao seu Consumo de Energia. Em que posso ajudar?', 'Você pode perguntar sobre o seu consumo corrente, por exemplo');
     }
   },
@@ -74,12 +72,15 @@ app.setHandler({
     console.log('Entrou na intent CurrentConsumptionIntent --------');
     var userId = this.$session.$data.userid;
     console.log('user id' + userId);
-    var currentConsumption = await getCurrentConsumption(userId);
-    console.log('Request response '+currentConsumption);
-    if (currentConsumption == null || currentConsumption == 0 || currentConsumption == '') {
+    var response = await getCurrentConsumption(userId);
+    console.log('Request response '+response);
+    if (response == null) {
       this.tell('Ainda não foi possível coletar informações do seu consumo de energia. Tente me perguntar de novo daqui a uma hora');  
+    } else if (response.hasOwnProperty('message')) {
+        this.tell(response['message']);
     } else {
-      this.tell('O seu consumo atual desse mês é de ' + currentConsumption + ' watts de energia');
+      let consumption = response.consuption;
+      this.tell('O seu consumo atual desse mês é de ' + consumption + ' watts de energia');
     }
   },
 
@@ -105,22 +106,25 @@ app.setHandler({
 
     var response = await getDevicesTurnOn(userId);
 
-    console.log('mock data');
+    console.log('response');
     console.log(response);
 
-    if (response == null || response.devices.length == 0) {
+    if (response == null) {
         this.tell('Não foi possível encontrar aparelhos ligados no momento');
 
+    } else if (response.hasOwnProperty('message')) {
+        this.tell(response['message']);
     } else {
-      if (response.devices.length > 5) {
-        let devices = getDevicesByPosition(response.devices, 0, 5);
-        this.$session.$data.devices = response.devices;
+      let devicesResponse = response.home_appliances;
+      if (devicesResponse.length > 5) {
+        let devices = getDevicesByPosition(devicesResponse, 0, 5);
+        this.$session.$data.devices = devicesResponse;
         this.$session.$data.position = 5;
 
         this.followUpState('CurrentDevicesOnState')
         .ask('Estão ligado no momento '+devices + ' .Gostaria de ouvir mais?', reprompt);
       } else {
-        let devices = getDevicesByPosition(response.devices, 0, response.devices.length);
+        let devices = getDevicesByPosition(devicesResponse, 0, devicesResponse.length);
           this.tell('Estão ligado no momento '+devices + '.');
       }
     }
@@ -170,10 +174,21 @@ app.setHandler({
 
   async NextMonthSpend() {
     var userId = this.$session.$data.userid;
-
-    var response = await getHowMuchSpendNextMonth(userId);
-    let value = '9';
-    this.tell('Segundo meus cálculos, você irá gastar aproximadamente '+ value + ' reais de energia elétrica');
+    let errorMessage = 'Não foi possível carregar a previsão de consumo do próximo mês. Gostaria de perguntar novamente?';
+    let reprompt = 'Gostaria de tentar perguntar novamente?';
+    var response = await getNextMonthConsumption(userId);
+    if (response == null) {
+      this.ask(errorMessage, errorMessage);
+    } else if (response.hasOwnProperty('message')) {
+      this.tell(response['message']);
+    } else {
+      let value = response.price;
+      if (value == null || value == 0) {
+        this.ask(errorMessage, errorMessage);
+      } else {
+        this.tell('Segundo meus cálculos, você irá gastar aproximadamente '+ getPriceVoiceResponse(value) + ' de energia elétrica');
+      }
+    }
   },
 
   async TipsIntent() {
@@ -181,27 +196,29 @@ app.setHandler({
 
     var response = await getTipsForEnergyComsumption(userId);
     if (response != null && response != '') {
-      this.tell(response);
+      this.tell(response.title + '. ' + response.detail);
     } else {
-      this.ask('Houve um problema para carregar sua dica. Pode tentar novamente?', 'Pode perguntar novamente?');
+      this.ask('Houve um problema para carregar sua dica. Pode tentar novamente?', 'Pode tentar novamente?');
     }
   },
 
   async DevicesConsumptionIntent() {
     var userId = this.$session.$data.userid;
 
-    var response = await getDevicesTurnOn(userId);
+    var response = await getDeviceMaxConsumption(userId);
 
-    if (response == null || response.devices.length == 0) {
+    if (response == null) {
       this.tell('Não foi possível encontrar aparelhos ligados no momento');
 
+    } if (response.hasOwnProperty('message')) {
+      this.tell(response['message']);
     } else {
       var endPos = 5;
-      if (response.devices.length < 5) {
-        endPos = response.devices.length;
+      if (response.home_appliances.length < 5) {
+        endPos = response.home_appliances.length;
       }
 
-      let devices = getDevicesByPosition(response.devices, 0, endPos);
+      let devices = getDevicesByPosition(response.home_appliances, 0, endPos);
       
       this.tell('Os aparelhos que mais gastam energia elétrica são ' + devices + '.');
       
@@ -213,6 +230,22 @@ app.setHandler({
   }
 
 });
+
+function getPriceVoiceResponse(price) {
+  if (price == null || price == '') {
+    return 0 + ' reais';
+  }
+  if (price.includes(',')) {
+    let split = price.split(',');
+    if (split[1] == '0' || split[1] == '00') {
+      return split[0] + ' reais';
+    }
+    return split[0] + ' reais e' + split[1] + ' centavos';
+  }
+
+  return price + ' reais';
+
+}
 
 function getDevicesByPosition(devices, startPos, endPos) {
     var response = '';
@@ -243,7 +276,7 @@ async function getCurrentConsumption(userId) {
   };
   const data = await requestPromise(options);
 
-  return data.home_consumption;
+  return data;
 }
 
 async function getCurrentConsumptionInValue(userId) {
@@ -263,39 +296,24 @@ async function getCurrentConsumptionInValue(userId) {
 }
 
 async function getDevicesTurnOn(userId) {
+  console.log(REQUEST_PATH + '/alexa/' + userId + '/home_appliances/connected');
   const options = {
-    uri: REQUEST_PATH + '/alexa/' + userId + '/home_appliance/now',
+    uri: REQUEST_PATH + '/alexa/' + userId + '/home_appliances/connected',
     json: true
   };
   const data = await requestPromise(options);
 
-  var mockData = {"devices":[ { "device": "geladeira"},
-                              { "device": "tv"},
-                              { "device": "computador"},
-                              { "device": "máquina de lavar"},
-                              { "device": "tv"},
-                              { "device": "refrigerador"},
-                              { "device": "abajur"},
-                              { "device": "escova elétrica"},
-                              { "device": "abajur 2"},
-                              { "device": "barbeador"},
-                              { "device": "modem de internet"},
-                              { "device": "vídeo game"},
-                              { "device": "tv 3"},
-                              { "device": "máquina"}
-                            ]};
-
-  return mockData;
+  return data;
 }
 
 async function getDeviceMaxConsumption(userId) {
   const options = {
-    uri: REQUEST_PATH + '/alexa/'+ userId + '/home_appliance/max_consumption',
+    uri: REQUEST_PATH + '/alexa/'+ userId + '/home_appliances/consumption',
     json: true
   };
   const data = await requestPromise(options);
 
-  return data.home_appliance;
+  return data;
 }
 
 async function getHowMuchSpentLastMonth(userId) {
@@ -308,26 +326,25 @@ async function getHowMuchSpentLastMonth(userId) {
   return data.home_appliance;
 }
 
-async function getHowMuchSpendNextMonth(userId) {
+async function getNextMonthConsumption(userId) {
+  console.log(REQUEST_PATH + '/alexa/'+ userId + '/consumption/next_month');
   const options = {
-    uri: REQUEST_PATH + '/alexa/'+ userId + '/home_appliance/max_consumption',
+    uri: REQUEST_PATH + '/alexa/'+ userId + '/consumption/next_month',
     json: true
   };
   const data = await requestPromise(options);
 
-  return data.home_appliance;
+  return data;
 }
 
-async function getTipsForEnergyComsumption(userId) {
+async function getTipsForEnergyComsumption() {
   const options = {
-    uri: REQUEST_PATH + '/alexa/'+ userId + '/home_appliance/max_consumption',
+    uri: REQUEST_PATH + '/eco_friendly/tips',
     json: true
   };
   const data = await requestPromise(options);
 
-  var mockValue = 'Você pode desligar sua máquina de lavar da tomada quando não estiver utilizando';
-  return mockValue;
-  //return data.home_appliance;
+  return data;
 }
 
 module.exports = { app };
