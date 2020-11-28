@@ -1,0 +1,3 @@
+#background {
+	content:url('../images/background_home.png');
+}

@@ -1,0 +1,12 @@
+#background {
+	background: url(./images/background_home.png) no-repeat center center fixed;
+}
+
+.roof {
+	width: 900px;
+}
+
+.eletronics {
+	margin-top: 20px;
+	width: 150px;
+}
