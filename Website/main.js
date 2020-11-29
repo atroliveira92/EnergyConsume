@@ -49,7 +49,7 @@ function changeStatus(id, device, power, array) {
             if (array[x].device == device) {
                 array.splice(x, 1);
                 needToAdd = false;
-                $(`#${id}`).removeClass('btn btn-success').addClass('btn btn-secondary');
+                $(`#${id}`).removeClass('btn btn-success').addClass('btn btn-danger');
                 $(`#${id}`).text('Desligado');
                 break;
             }
@@ -60,7 +60,7 @@ function changeStatus(id, device, power, array) {
             device: device,
             power: power
         })
-        $(`#${id}`).removeClass('btn btn-secondary').addClass('btn btn-success');
+        $(`#${id}`).removeClass('btn btn-danger').addClass('btn btn-success');
         $(`#${id}`).text('Ligado');
     }
     console.log(`#${id}`);
@@ -69,22 +69,22 @@ function changeStatus(id, device, power, array) {
 function loadDevicesStatus(array) {
     for (var x = 0; x < array.length; x++) {
         if (array[x].device == "tv") {
-            $(`#btnTv`).removeClass('btn btn-secondary').addClass('btn btn-success');
+            $(`#btnTv`).removeClass('btn btn-danger').addClass('btn btn-success');
             $(`#btnTv`).text('Ligado');
         } else if (array[x].device == "geladeira") {
-            $(`#btnRefrigerator`).removeClass('btn btn-secondary').addClass('btn btn-success');
+            $(`#btnRefrigerator`).removeClass('btn btn-danger').addClass('btn btn-success');
             $(`#btnRefrigerator`).text('Ligado');
         } else if (array[x].device == "abajur") {
-            $(`#btnLamp`).removeClass('btn btn-secondary').addClass('btn btn-success');
+            $(`#btnLamp`).removeClass('btn btn-danger').addClass('btn btn-success');
             $(`#btnLamp`).text('Ligado');
         } else if (array[x].device == "microondas") {
-            $(`#btnMicrowave`).removeClass('btn btn-secondary').addClass('btn btn-success');
+            $(`#btnMicrowave`).removeClass('btn btn-danger').addClass('btn btn-success');
             $(`#btnMicrowave`).text('Ligado');
         } else if (array[x].device == "ferro de passar roupa") {
-            $(`#btnIron`).removeClass('btn btn-secondary').addClass('btn btn-success');
+            $(`#btnIron`).removeClass('btn btn-danger').addClass('btn btn-success');
             $(`#btnIron`).text('Ligado');
         } else if (array[x].device == "liquidificador") {
-            $(`#btnBlender`).removeClass('btn btn-secondary').addClass('btn btn-success');
+            $(`#btnBlender`).removeClass('btn btn-danger').addClass('btn btn-success');
             $(`#btnBlender`).text('Ligado');
         } 
     }

@@ -75,9 +75,7 @@ app.setHandler({
   },
 
   async CurrentConsumptionIntent() {
-    console.log('Entrou na intent CurrentConsumptionIntent --------');
     var userId = this.$session.$data.userid;
-    console.log('user id' + userId);
     var response = await getCurrentConsumption(userId);
     console.log('Request response '+response);
     if (response == null) {
@@ -86,7 +84,7 @@ app.setHandler({
         this.tell(response['message']);
     } else {
       let consumption = response.consuption;
-      this.tell('O seu consumo atual desse mês é de ' + consumption + ' watts de energia');
+      this.ask('O seu consumo atual desse mês é de ' + consumption + ' watts de energia. Algo mais?', 'Gostaria de me fazer outra pergunta?');
     }
   },
 
@@ -110,7 +108,8 @@ app.setHandler({
       } else if (response == null || !response.hasOwnProperty('price')) {
         this.ask('Desculpe, não foi possível carregar informações de seu consumo esse mês. Pode tentar novamente ou me fazer outra pergunta?', 'Pode me perguntar novamente');
       } else {
-        this.tell('Segundo meus cálculos, você já gastou aproximadamente ' + getPriceVoiceResponse(response.price) + ' de energia elétrica esse mês');
+        this.ask('Segundo meus cálculos, você já gastou aproximadamente ' + getPriceVoiceResponse(response.price) + ' de energia elétrica esse mês.' +
+                 'Gostaria de fazer outra pergunta?', 'Gostaria de fazer outra pergunta?');
       }
 
     } catch(error) {
@@ -144,10 +143,10 @@ app.setHandler({
         this.$session.$data.position = 5;
 
         this.followUpState('CurrentDevicesOnState')
-        .ask('Estão ligado no momento '+devices + ' .Gostaria de ouvir mais?', reprompt);
+        .ask('Estão ligado no momento '+ devices + ' .Gostaria de ouvir mais?', reprompt);
       } else {
         let devices = getDevicesByPosition(devicesResponse, 0, devicesResponse.length);
-          this.tell('Estão ligado no momento '+devices + '.');
+          this.ask('Estão ligado no momento '+devices + '. Gostaria de perguntar outra coisa?', 'Gostaria de me perguntar algo mais?');
       }
     }
   },
@@ -162,7 +161,7 @@ app.setHandler({
           endPos = devices.length;
           let response = getDevicesByPosition(devices, currentPos, endPos);
           
-          this.tell('Por fim, os últimos aparelhos ligados são '+response);
+          this.ask('Por fim, os últimos aparelhos ligados são '+response + '. Gostaria de me perguntar algo mais?', 'O que mais gostaria de saber sobre seu consumo de energia?');
           
           this.$session.$data.devices = null;
           this.$session.$data.position = 0;
@@ -208,7 +207,7 @@ app.setHandler({
       let response = await getConsumptionByDate(userId, year, month);
       if (response != null && response.hasOwnProperty('price')) {
         
-        this.tell('Você gastou aproximadamente ' + getPriceVoiceResponse(response.price) + ' de energia elétrica mês passado');
+        this.ask('Você gastou aproximadamente ' + getPriceVoiceResponse(response.price) + ' de energia elétrica mês passado. O que mais gostaria de perguntar?', 'Quer me perguntar algo?');
       }
   
     } catch(error) {
@@ -235,7 +234,7 @@ app.setHandler({
       if (value == null || value == 0) {
         this.ask(errorMessage, reprompt);
       } else {
-        this.tell('Segundo meus cálculos, você irá gastar aproximadamente '+ getPriceVoiceResponse(value) + ' de energia elétrica');
+        this.ask('Segundo meus cálculos, você irá gastar aproximadamente '+ getPriceVoiceResponse(value) + ' de energia elétrica', 'Há algo mais que gostaria de perguntar?');
       }
     }
   },
@@ -245,7 +244,7 @@ app.setHandler({
 
     var response = await getTipsForEnergyComsumption(userId);
     if (response != null && response != '') {
-      this.tell(response.title + '. ' + response.detail);
+      this.ask(response.title + '. ' + response.detail, 'Gostaria de me perguntar algo mais?');
     } else {
       this.ask('Houve um problema para carregar sua dica. Pode tentar novamente?', 'Pode tentar novamente?');
     }
@@ -269,7 +268,7 @@ app.setHandler({
 
       let devices = getDevicesByPosition(response.home_appliances, 0, endPos);
       
-      this.tell('Os aparelhos que mais gastam energia elétrica são ' + devices + '.');
+      this.ask('Os aparelhos que mais gastam energia elétrica são ' + devices + '. Quer me fazer outra pergunta?', 'Deseja me perguntar algo mais?');
       
     }
   },
@@ -285,7 +284,7 @@ app.setHandler({
   HelpIntent() {
     this.ask('Você pode perguntar qual o consumo de energia elétrica em watts e em reais para o mês corrente, mês passado ou previsão para o próximo mês. '+ 
               'Também é possível perguntar quais aparelhos estão ligados e quais mais gastam energia. Por fim, pergunte como diminuir seu consumo de energia '+
-              'e poderei dar algumas dicas sobre. Gostaria de fazer uma pergunta?', 'Gostaria de fazer uma pergunta?');
+              'e poderei dar algumas dicas sobre. Por onde quer começar?', 'Gostaria de fazer uma pergunta?');
   },
 
   StopIntent() {
