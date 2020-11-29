@@ -26,10 +26,9 @@
       {
         "name": "CurrentConsumptionValueIntent",
         "phrases": [
+          "quanto estou gastante de energia elétrica",
+          "quanto estou gastanto esse mês",
           "quanto gastei",
-          "quanto já gastei",
-          "quanto já gastei esse mês",
-          "quanto já gastei esse mês de energia",
           "consumo em reais",
           "minha conta de energia",
           "minha conta de energia esse mês",
@@ -45,12 +44,17 @@
           "o que está ligado",
           "me fale quais aparelhos estão ligados",
           "qual dispositivo está ligado",
-          "quais dispositivos estão ligados"
+          "quais dispositivos estão ligados",
+          "quais eletrodomésticos estão ligados",
+          "eletrodomésticos ligados agora"
         ]
       },
       {
         "name": "LastMonthSpentIntent",
         "phrases": [
+          "quanto eu gastei mês passado",
+          "quando eu gastei de energia elétrica mês passado",
+          "quanto gastei esse mês de energia mês passado",
           "gasto do mês passado",
           "valor mês passado"
         ]
@@ -59,6 +63,8 @@
         "name": "NextMonthSpend",
         "phrases": [
           "quanto irei gastar de energia elétrica mês que vem",
+          "quanto irei gastar de energia elétrica próximo mês",
+          "quanto vou gastar de energia elétrica mês que vem",
           "quanto vou gastar de energia elétrica mês que vem",
           "quanto vou gastar de energia mês que vem",
           "quanto vou gastar mês que vem",
@@ -73,7 +79,8 @@
         "phrases": [
           "me fale dicas para diminuir meu consumo",
           "me dê dicas para diminuir meu consumo",
-          "como posso diminuir meu consumo de energia",
+          "me dê dicas de como posso diminuir meu consumo",
+          "me fale como posso diminuir meu consumo de energia",
           "como posso diminuir meu consumo",
           "como posso diminuir meu consumo de energia elétrica"
         ]
@@ -81,7 +88,9 @@
       {
         "name": "DevicesConsumptionIntent",
         "phrases": [
+          "quais são os eletrodomésticos que mais gastam na minha casa",
           "quais eletrodomésticos que mais gastam",
+          "quais dispositivos que mais gastam",
           "eletrodomésticos que mais gastam",
           "me fale quais aparelhos mais gastam",
           "me fale os eletrodomésticos que mais gastam",
@@ -108,7 +117,8 @@
                 "me fale as opções",
                 "o que eu posso saber",
                 "o que você pode me informar",
-                "o que eu posso perguntar"
+                "o que eu posso perguntar",
+                "O que você pode fazer"
               ]
             },
             {

@@ -108,7 +108,7 @@ app.setHandler({
       } else if (response == null || !response.hasOwnProperty('price')) {
         this.ask('Desculpe, não foi possível carregar informações de seu consumo esse mês. Pode tentar novamente ou me fazer outra pergunta?', 'Pode me perguntar novamente');
       } else {
-        this.ask('Segundo meus cálculos, você já gastou aproximadamente ' + getPriceVoiceResponse(response.price) + ' de energia elétrica esse mês.' +
+        this.ask('Segundo meus cálculos, você já gastou aproximadamente ' + getPriceVoiceResponse(response.price) + ' de energia elétrica esse mês. ' +
                  'Gostaria de fazer outra pergunta?', 'Gostaria de fazer outra pergunta?');
       }
 
@@ -130,11 +130,11 @@ app.setHandler({
     console.log('response');
     console.log(response);
 
-    if (response == null) {
-        this.tell('Não foi possível encontrar aparelhos ligados no momento');
+    if (response == null || response == '' || response.home_appliances == '') {
+        this.ask('Não foi possível encontrar aparelhos ligados no momento. Pode me perguntar outra coisa?', 'Gostaria de me fazer outra pergunta?');
 
     } else if (response.hasOwnProperty('message')) {
-        this.tell(response['message']);
+        this.ask(response['message'], 'Gostaria de me fazer outra pergunta?');
     } else {
       let devicesResponse = response.home_appliances;
       if (devicesResponse.length > 5) {
@@ -234,7 +234,8 @@ app.setHandler({
       if (value == null || value == 0) {
         this.ask(errorMessage, reprompt);
       } else {
-        this.ask('Segundo meus cálculos, você irá gastar aproximadamente '+ getPriceVoiceResponse(value) + ' de energia elétrica', 'Há algo mais que gostaria de perguntar?');
+        this.ask('Segundo meus cálculos, você irá gastar aproximadamente '+ getPriceVoiceResponse(value) + ' de energia elétrica próximo mês. O que mais deseja saber?',
+         'Há algo mais que gostaria de perguntar?');
       }
     }
   },
@@ -255,11 +256,11 @@ app.setHandler({
 
     var response = await getDeviceMaxConsumption(userId);
 
-    if (response == null) {
-      this.tell('Não foi possível encontrar aparelhos ligados no momento');
+    if (response == null || response == '' || response.home_appliances == '') {
+      this.ask('Não foi possível encontrar aparelhos ligados no momento. Quer me perguntar outra coisa?', 'Gostaria de me perguntar algo mais?');
 
     } if (response.hasOwnProperty('message')) {
-      this.tell(response['message']);
+      this.ask(response['message']);
     } else {
       var endPos = 5;
       if (response.home_appliances.length < 5) {
