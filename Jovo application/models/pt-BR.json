@@ -100,11 +100,30 @@
             },
             {
               "name": "AMAZON.HelpIntent",
-              "samples": []
+              "samples": [
+                "ajuda",
+                "me ajude",
+                "opções",
+                "me mostre as opções",
+                "me fale as opções",
+                "o que eu posso saber",
+                "o que você pode me informar",
+                "o que eu posso perguntar"
+              ]
             },
             {
               "name": "AMAZON.StopIntent",
               "samples": []
+            },
+            {
+              "name": "AMAZON.NoIntent",
+              "samples": [
+                "não",
+                "fechar",
+                "sair",
+                "encerrar",
+                "somente isso"
+              ]
             }
           ]
         }

@@ -13,7 +13,9 @@ const requestPromise = require('request-promise-native');
 
 const app = new App();
 
-const {getTipsForEnergyComsumption, getNextMonthConsumption} = require('./requests');
+const {getTipsForEnergyComsumption, getNextMonthConsumption, 
+      getDeviceMaxConsumption, getDevicesTurnOn, getConsumptionByDate,
+      getCurrentConsumption} = require('./requests');
 
 app.use(
   new Alexa(),
@@ -275,8 +277,19 @@ app.setHandler({
   Unhandled() {
     this.ask('Não consegui compreender o que perguntou. Pode tentar novamente?', 'Pode repetir a pergunta?');
   },
+
   NoIntent() {
-    this.tell('Tudo bem, até logo');
+    this.tell('Tudo bem, até logo.');
+  },
+
+  HelpIntent() {
+    this.ask('Você pode perguntar qual o consumo de energia elétrica em watts e em reais para o mês corrente, mês passado ou previsão para o próximo mês. '+ 
+              'Também é possível perguntar quais aparelhos estão ligados e quais mais gastam energia. Por fim, pergunte como diminuir seu consumo de energia '+
+              'e poderei dar algumas dicas sobre. Gostaria de fazer uma pergunta?', 'Gostaria de fazer uma pergunta?');
+  },
+
+  StopIntent() {
+    this.tell("Ok. Até mais.")
   }
 
 });
@@ -315,55 +328,5 @@ function getDevicesByPosition(devices, startPos, endPos) {
 
     return response;
 }
-
-async function getCurrentConsumption(userId) {
-  console.log('Current path ' + REQUEST_PATH);
-  console.log('user id for request ' + userId);
-  console.log(REQUEST_PATH + '/alexa/'+userId+'/consumption/now')
-  const options = {
-    uri: REQUEST_PATH + '/alexa/'+userId+'/consumption/now',
-    json: true
-  };
-  const data = await requestPromise(options);
-
-  return data;
-}
-
-async function getConsumptionByDate(userId, year, month) {
-  console.log('user id for request ' + userId);
-  console.log(REQUEST_PATH + '/alexa/'+userId+'/consumption/date?year=' + year + '&month='+month)
-
-  /**TODO implement the right request*/
-
-  const options = {
-    uri: REQUEST_PATH + '/alexa/'+userId+'/consumption/date?year=' + year + '&month='+month,
-    json: true
-  };
-  const data = await requestPromise(options);
-
-  return data;
-}
-
-async function getDevicesTurnOn(userId) {
-  console.log(REQUEST_PATH + '/alexa/' + userId + '/home_appliances/connected');
-  const options = {
-    uri: REQUEST_PATH + '/alexa/' + userId + '/home_appliances/connected',
-    json: true
-  };
-  const data = await requestPromise(options);
-
-  return data;
-}
-
-async function getDeviceMaxConsumption(userId) {
-  const options = {
-    uri: REQUEST_PATH + '/alexa/'+ userId + '/home_appliances/consumption',
-    json: true
-  };
-  const data = await requestPromise(options);
-
-  return data;
-}
-
 
 module.exports = { app };
