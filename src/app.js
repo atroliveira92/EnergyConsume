@@ -13,6 +13,8 @@ const requestPromise = require('request-promise-native');
 
 const app = new App();
 
+const {getTipsForEnergyComsumption, getNextMonthConsumption} = require('./requests');
+
 app.use(
   new Alexa(),
   new GoogleAssistant(),
@@ -55,7 +57,9 @@ app.setHandler({
         console.log(metadata.user_id);
         console.log('My log finish-----')
         this.$session.$data.userid = metadata.user_id;
-        
+
+        console.log(getTipsForEnergyComsumption);
+
         this.ask('Olá, bem-vindo ao seu Consumo de Energia. Em que posso ajudar?', 'Você pode perguntar sobre o seu consumo corrente, por exemplo');
     }
   },
@@ -88,12 +92,28 @@ app.setHandler({
     console.log('Entrou na intent CurrentConsumptionIntent --------');
     var userId = this.$session.$data.userid;
     console.log('user id' + userId);
-    var currentConsumption = await getCurrentConsumptionInValue(userId);
-    console.log('Request response '+currentConsumption);
-    if (currentConsumption == null || currentConsumption == 0 || currentConsumption == '') {
-      this.tell('Ainda não foi possível coletar informações do seu consumo de energia. Tente me perguntar de novo daqui a uma hora');  
-    } else {
-      this.tell('Segundo meus cálculos, você já gastou aproximadamente' + currentConsumption + ' reais de energia esse mês');
+
+    try {
+      const userTimeZone = await this.$alexaSkill.$user.getTimezone();
+      console.log('time zone '+userTimeZone);
+
+      const currentDateTime = new Date(new Date().toLocaleString("en-US", {timeZone: userTimeZone}));
+      
+      console.log(currentDateTime);
+
+
+      let response = await getConsumptionByDate(userId, currentDateTime.getFullYear(), currentDateTime.getMonth() + 1);
+      if (response.hasOwnProperty('message')) {
+        this.tell(response.message);
+      } else if (response == null || !response.hasOwnProperty('price')) {
+        this.ask('Desculpe, não foi possível carregar informações de seu consumo esse mês. Pode tentar novamente ou me fazer outra pergunta?', 'Pode me perguntar novamente');
+      } else {
+        this.tell('Segundo meus cálculos, você já gastou aproximadamente ' + getPriceVoiceResponse(response.price) + ' de energia elétrica esse mês');
+      }
+
+    } catch(error) {
+        console.log(error);
+        this.ask('Desculpe, ocorreu um erro ao carregar informações sobre data e hora. Pode perguntar novamente ou me perguntar algo mais?', 'Pode perguntar novamente?');
     }
   },
 
@@ -166,10 +186,37 @@ app.setHandler({
 
   async LastMonthSpentIntent() {
     var userId = this.$session.$data.userid;
+    
+    try {
+      const userTimeZone = await this.$alexaSkill.$user.getTimezone();
+      console.log('time zone '+userTimeZone);
 
-    var response = await getHowMuchSpentLastMonth(userId);
-    let value = '9';
-    this.tell('Mês passado você gastou aproximadamente '+ value + ' reais de energia elétrica');
+      const currentDateTime = new Date(new Date().toLocaleString("en-US", {timeZone: userTimeZone}));
+      
+      console.log(currentDateTime);
+      
+      var year = currentDateTime.getFullYear();
+      var month = currentDateTime.getMonth();
+
+      if (month == 0) {
+          year = year - 1;
+          month = 12;
+      }
+
+      let response = await getConsumptionByDate(userId, year, month);
+      if (response != null && response.hasOwnProperty('price')) {
+        
+        this.tell('Você gastou aproximadamente ' + getPriceVoiceResponse(response.price) + ' de energia elétrica mês passado');
+      }
+  
+    } catch(error) {
+        console.log(error);
+        this.ask('Desculpe, ocorreu um erro ao carregar informações sobre data e hora. Pode perguntar novamente ou me perguntar algo mais?', 'Pode perguntar novamente?');
+   }
+
+    // var response = await getHowMuchSpentLastMonth(userId);
+    // let value = '9';
+    // this.tell('Mês passado você gastou aproximadamente '+ value + ' reais de energia elétrica');
   },
 
   async NextMonthSpend() {
@@ -178,13 +225,13 @@ app.setHandler({
     let reprompt = 'Gostaria de tentar perguntar novamente?';
     var response = await getNextMonthConsumption(userId);
     if (response == null) {
-      this.ask(errorMessage, errorMessage);
+      this.ask(errorMessage, reprompt);
     } else if (response.hasOwnProperty('message')) {
       this.tell(response['message']);
     } else {
       let value = response.price;
       if (value == null || value == 0) {
-        this.ask(errorMessage, errorMessage);
+        this.ask(errorMessage, reprompt);
       } else {
         this.tell('Segundo meus cálculos, você irá gastar aproximadamente '+ getPriceVoiceResponse(value) + ' de energia elétrica');
       }
@@ -227,6 +274,9 @@ app.setHandler({
 
   Unhandled() {
     this.ask('Não consegui compreender o que perguntou. Pode tentar novamente?', 'Pode repetir a pergunta?');
+  },
+  NoIntent() {
+    this.tell('Tudo bem, até logo');
   }
 
 });
@@ -240,7 +290,7 @@ function getPriceVoiceResponse(price) {
     if (split[1] == '0' || split[1] == '00') {
       return split[0] + ' reais';
     }
-    return split[0] + ' reais e' + split[1] + ' centavos';
+    return split[0] + ' reais e ' + split[1] + ' centavos';
   }
 
   return price + ' reais';
@@ -279,20 +329,19 @@ async function getCurrentConsumption(userId) {
   return data;
 }
 
-async function getCurrentConsumptionInValue(userId) {
-  console.log('Current path ' + REQUEST_PATH);
+async function getConsumptionByDate(userId, year, month) {
   console.log('user id for request ' + userId);
-  console.log(REQUEST_PATH + '/alexa/'+userId+'/consumption/now')
+  console.log(REQUEST_PATH + '/alexa/'+userId+'/consumption/date?year=' + year + '&month='+month)
 
   /**TODO implement the right request*/
 
   const options = {
-    uri: REQUEST_PATH + '/alexa/'+userId+'/consumption/now',
+    uri: REQUEST_PATH + '/alexa/'+userId+'/consumption/date?year=' + year + '&month='+month,
     json: true
   };
   const data = await requestPromise(options);
 
-  return data.home_consumption;
+  return data;
 }
 
 async function getDevicesTurnOn(userId) {
@@ -316,35 +365,5 @@ async function getDeviceMaxConsumption(userId) {
   return data;
 }
 
-async function getHowMuchSpentLastMonth(userId) {
-  const options = {
-    uri: REQUEST_PATH + '/alexa/'+ userId + '/home_appliance/max_consumption',
-    json: true
-  };
-  const data = await requestPromise(options);
-
-  return data.home_appliance;
-}
-
-async function getNextMonthConsumption(userId) {
-  console.log(REQUEST_PATH + '/alexa/'+ userId + '/consumption/next_month');
-  const options = {
-    uri: REQUEST_PATH + '/alexa/'+ userId + '/consumption/next_month',
-    json: true
-  };
-  const data = await requestPromise(options);
-
-  return data;
-}
-
-async function getTipsForEnergyComsumption() {
-  const options = {
-    uri: REQUEST_PATH + '/eco_friendly/tips',
-    json: true
-  };
-  const data = await requestPromise(options);
-
-  return data;
-}
 
 module.exports = { app };
