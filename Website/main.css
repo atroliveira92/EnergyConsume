@@ -1,12 +1,24 @@
 #background {
-	background: url(./images/background_home.png) no-repeat center center fixed;
+  background: url(./images/background_home.png) no-repeat center center fixed;
 }
 
 .roof {
-	width: 900px;
+  width: 900px;
 }
 
 .eletronics {
-	margin-top: 20px;
-	width: 150px;
+  margin-top: 20px;
+  width: 150px;
+}
+
+.row-custom {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  margin-bottom: 40px;
+}
+
+p {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
