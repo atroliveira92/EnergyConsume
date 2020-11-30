@@ -32,14 +32,16 @@ const REQUEST_PATH = 'https://moaci-backend.herokuapp.com';
 
 app.setHandler({
   async LAUNCH() {
-     /*
-    Checks if there is an access token. 
-    No access token -> Ask the user to sign in
-    If there is one -> API call to access user data 
-    */
-    console.log('Meu Log----->');
-
-   if (!this.$request.getAccessToken()) {
+   console.log('Entrou no LAUNCH');
+    if (this.$session.$data.userid != null) {
+      this.ask('Olá, bem-vindo ao seu Consumo de Energia. Em que posso ajudar?', 'Você pode perguntar sobre o seu consumo corrente, por exemplo');
+    }
+  },
+  
+  async NEW_SESSION() {
+    // Always triggered when a user opens your app, no matter the query (new session)
+    console.log('Entrou no NEW_SESSION');
+    if (!this.$request.getAccessToken()) {
       this.$alexaSkill.showAccountLinkingCard();
       console.log('MY LOG --> Não tem access token')
       this.tell('Por favor, realize o login');
@@ -59,11 +61,7 @@ app.setHandler({
         console.log(metadata.user_id);
         console.log('My log finish-----')
         this.$session.$data.userid = metadata.user_id;
-
-        console.log(getTipsForEnergyComsumption);
-
-        this.ask('Olá, bem-vindo ao seu Consumo de Energia. Em que posso ajudar?', 'Você pode perguntar sobre o seu consumo corrente, por exemplo');
-    }
+     }
   },
 
   HelloWorldIntent() {
@@ -290,9 +288,41 @@ app.setHandler({
 
   StopIntent() {
     this.tell("Ok. Até mais.")
+  },
+
+  END() {
+    this.tell('Até mais.');
   }
 
 });
+
+async function checkForUserId() {
+  console.log('Meu Log----->');
+
+  if (!this.$request.getAccessToken()) {
+     this.$alexaSkill.showAccountLinkingCard();
+     console.log('MY LOG --> Não tem access token')
+     this.tell('Por favor, realize o login');
+     return false;
+   } else {
+     const token = this.$request.getAccessToken();
+       // API request
+       const { data } = await HttpService.get('https://dev-qd-kqcj9.us.auth0.com/userinfo', {
+           headers: {
+               authorization: 'Bearer ' + token,
+           },
+       });
+       console.log('My log starts-----')
+       console.log(data);
+       console.log(token);
+       console.log(data['https://consumoenergia.com.br/metadata']);
+       let metadata = data['https://consumoenergia.com.br/metadata'];
+       console.log(metadata.user_id);
+       console.log('My log finish-----')
+       this.$session.$data.userid = metadata.user_id;
+       return true;
+    }
+}
 
 function getPriceVoiceResponse(price) {
   if (price == null || price == '') {

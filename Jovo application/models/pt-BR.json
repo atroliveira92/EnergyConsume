@@ -82,7 +82,8 @@
           "me dê dicas de como posso diminuir meu consumo",
           "me fale como posso diminuir meu consumo de energia",
           "como posso diminuir meu consumo",
-          "como posso diminuir meu consumo de energia elétrica"
+          "como posso diminuir meu consumo de energia elétrica",
+          "como posso diminuir minha conta de luz"
         ]
       },
       {
@@ -132,7 +133,8 @@
                 "fechar",
                 "sair",
                 "encerrar",
-                "somente isso"
+                "somente isso",
+                "nada"
               ]
             }
           ]

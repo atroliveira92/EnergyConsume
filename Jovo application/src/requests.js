@@ -42,7 +42,12 @@ module.exports.getDevicesTurnOn = async (userId) => {
     uri: REQUEST_PATH + '/alexa/' + userId + '/home_appliances/connected',
     json: true
   };
-  const data = await requestPromise(options);
+  var data;
+  try {
+      data = await requestPromise(options);
+  } catch (error) {
+    console.log(error)
+  }
 
   return data;
 };
