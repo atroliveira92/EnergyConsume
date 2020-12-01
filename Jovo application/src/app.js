@@ -165,9 +165,11 @@ app.setHandler({
         if (endPos >= devices.length) {
           endPos = devices.length;
           let response = getDevicesByPosition(devices, currentPos, endPos);
-          var message = 'Por fim, também está ligado '+response + '.';
-          if (response.includes(',') || response.includes('e')) {
-            message = 'Por fim, os últimos aparelhos ligados são '+response + '.';
+          console.log('currentpos: '+currentPos);
+          console.log('endPos: '+endPos);
+          var message = 'Por fim, os últimos aparelhos ligados são '+response + '.';
+          if (currentPos == endPos - 1) {
+            message = 'Por fim, também está ligado '+response + '.';
           }
           this.tell(message);
           
