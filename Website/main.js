@@ -68,7 +68,7 @@ function changeStatus(id, device, power, array) {
 
 function loadDevicesStatus(array) {
     for (var x = 0; x < array.length; x++) {
-        if (array[x].device == "tv") {
+        if (array[x].device == "televisão") {
             $(`#btnTv`).removeClass('btn btn-danger').addClass('btn btn-success');
             $(`#btnTv`).text('Ligado');
         } else if (array[x].device == "geladeira") {

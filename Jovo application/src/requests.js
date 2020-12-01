@@ -8,7 +8,12 @@ module.exports.getTipsForEnergyComsumption = async () => {
         uri: REQUEST_PATH + '/eco_friendly/tips',
         json: true
       };
-      const data = await requestPromise(options);
+      var data;
+      try {
+        data = await requestPromise(options);
+      } catch(error) {
+        console.log(error);
+      }
     
       return data;
 
@@ -21,7 +26,12 @@ module.exports.getNextMonthConsumption = async (userId) => {
       uri: REQUEST_PATH + '/alexa/'+ userId + '/consumption/next_month',
       json: true
     };
-    const data = await requestPromise(options);
+    var data;
+    try {
+      data = await requestPromise(options);
+    } catch(error) {
+      console.log(error);
+    }
   
     return data;
 
@@ -32,7 +42,12 @@ module.exports.getDeviceMaxConsumption = async (userId) => {
     uri: REQUEST_PATH + '/alexa/'+ userId + '/home_appliances/consumption',
     json: true
   };
-  const data = await requestPromise(options);
+  var data;
+  try {
+    data = await requestPromise(options);
+  } catch(error) {
+    console.log(error);
+  }
 
   return data;
 };
@@ -60,7 +75,12 @@ module.exports.getConsumptionByDate = async (userId, year, month) => {
     uri: REQUEST_PATH + '/alexa/'+userId+'/consumption/date?year=' + year + '&month='+month,
     json: true
   };
-  const data = await requestPromise(options);
+  var data;
+  try {
+    data = await requestPromise(options);
+  } catch(error) {
+    console.log(error);
+  }
 
   return data;
 };
@@ -73,7 +93,13 @@ module.exports.getCurrentConsumption = async (userId) => {
     uri: REQUEST_PATH + '/alexa/'+userId+'/consumption/now',
     json: true
   };
-  const data = await requestPromise(options);
+
+  var data;
+  try {
+    data = await requestPromise(options);
+  } catch(error) {
+    console.log(error);
+  }
 
   return data;
 };

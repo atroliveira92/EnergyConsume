@@ -10,7 +10,8 @@ const requestPromise = require('request-promise-native');
 // ------------------------------------------------------------------
 // APP INITIALIZATION
 // ------------------------------------------------------------------
-
+const defaultMessage = 'Não conseguir entender muito bem. Pode me perguntar novamente?';
+const defaulReprompt = 'Pode me fazer outra pergunta?';
 const app = new App();
 
 const {getTipsForEnergyComsumption, getNextMonthConsumption, 
@@ -77,9 +78,9 @@ app.setHandler({
     var response = await getCurrentConsumption(userId);
     console.log('Request response '+response);
     if (response == null) {
-      this.tell('Ainda não foi possível coletar informações do seu consumo de energia. Tente me perguntar de novo daqui a uma hora');  
+      this.ask('Ainda não foi possível coletar informações do seu consumo de energia. Tente me perguntar de novo daqui a uma hora', defaulReprompt);  
     } else if (response.hasOwnProperty('message')) {
-        this.tell(response['message']);
+        this.ask(response['message'], defaulReprompt);
     } else {
       let consumption = response.consuption;
       this.ask('O seu consumo atual desse mês é de ' + consumption + ' watts de energia. Algo mais?', 'Gostaria de me fazer outra pergunta?');
@@ -101,12 +102,14 @@ app.setHandler({
 
 
       let response = await getConsumptionByDate(userId, currentDateTime.getFullYear(), currentDateTime.getMonth() + 1);
-      if (response.hasOwnProperty('message')) {
-        this.tell(response.message);
+      if (response == null) {
+        this.ask(defaultMessage, defaulReprompt);
+      } else if (response.hasOwnProperty('message')) {
+        this.ask(response.message);
       } else if (response == null || !response.hasOwnProperty('price')) {
         this.ask('Desculpe, não foi possível carregar informações de seu consumo esse mês. Pode tentar novamente ou me fazer outra pergunta?', 'Pode me perguntar novamente');
       } else {
-        this.ask('Segundo meus cálculos, você já gastou aproximadamente ' + getPriceVoiceResponse(response.price) + ' de energia elétrica esse mês. ' +
+        this.ask('Segundo meus cálculos, você está gastando aproximadamente ' + getPriceVoiceResponse(response.price) + ' de energia elétrica. ' +
                  'Gostaria de fazer outra pergunta?', 'Gostaria de fazer outra pergunta?');
       }
 
@@ -141,10 +144,14 @@ app.setHandler({
         this.$session.$data.position = 5;
 
         this.followUpState('CurrentDevicesOnState')
-        .ask('Estão ligado no momento '+ devices + ' .Gostaria de ouvir mais?', reprompt);
+        .ask('Estão ligados no momento '+ devices + '. Gostaria de ouvir mais?', reprompt);
       } else {
         let devices = getDevicesByPosition(devicesResponse, 0, devicesResponse.length);
-          this.ask('Estão ligado no momento '+devices + '. Gostaria de perguntar outra coisa?', 'Gostaria de me perguntar algo mais?');
+          if (devicesResponse.length == 1) {
+            this.ask('Está ligado somente ' + devices + '. Gostaria de perguntar outra coisa?', defaulReprompt);
+          } else {
+            this.ask('Estão ligados no momento '+devices + '. Gostaria de perguntar outra coisa?', 'Gostaria de me perguntar algo mais?');
+          }
       }
     }
   },
@@ -158,8 +165,11 @@ app.setHandler({
         if (endPos >= devices.length) {
           endPos = devices.length;
           let response = getDevicesByPosition(devices, currentPos, endPos);
-          
-          this.ask('Por fim, os últimos aparelhos ligados são '+response + '. Gostaria de me perguntar algo mais?', 'O que mais gostaria de saber sobre seu consumo de energia?');
+          var message = 'Por fim, também está ligado '+response + '.';
+          if (response.includes(',') || response.includes('e')) {
+            message = 'Por fim, os últimos aparelhos ligados são '+response + '.';
+          }
+          this.tell(message);
           
           this.$session.$data.devices = null;
           this.$session.$data.position = 0;
@@ -175,7 +185,7 @@ app.setHandler({
     NoIntent() {
         this.$session.$data.devices = null;
         this.$session.$data.position = 0;
-        this.tell('Tudo bem, até logo');
+        this.tell('Tudo bem. até mais');
     },
     Unhandled() {
       this.followUpState('CurrentDevicesOnState')
@@ -206,6 +216,8 @@ app.setHandler({
       if (response != null && response.hasOwnProperty('price')) {
         
         this.ask('Você gastou aproximadamente ' + getPriceVoiceResponse(response.price) + ' de energia elétrica mês passado. O que mais gostaria de perguntar?', 'Quer me perguntar algo?');
+      } else {
+        this.ask(defaultMessage, defaultMessage);
       }
   
     } catch(error) {
@@ -257,7 +269,7 @@ app.setHandler({
     if (response == null || response == '' || response.home_appliances == '') {
       this.ask('Não foi possível encontrar aparelhos ligados no momento. Quer me perguntar outra coisa?', 'Gostaria de me perguntar algo mais?');
 
-    } if (response.hasOwnProperty('message')) {
+    } else if (response.hasOwnProperty('message')) {
       this.ask(response['message']);
     } else {
       var endPos = 5;
