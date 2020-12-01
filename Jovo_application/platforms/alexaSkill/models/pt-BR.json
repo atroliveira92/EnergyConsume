@@ -1,0 +1,145 @@
+{
+	"interactionModel": {
+		"languageModel": {
+			"invocationName": "consumo de energia",
+			"types": [],
+			"intents": [
+				{
+					"name": "HelloWorldIntent",
+					"samples": [
+						"olá",
+						"diga olá",
+						"diga olá mundo"
+					]
+				},
+				{
+					"name": "CurrentConsumptionIntent",
+					"samples": [
+						"qual meu consumo atual",
+						"meu consumo atual",
+						"qual o meu consumo de energia atual",
+						"meu consumo de energia atual",
+						"qual o meu consumo de energia atualmente",
+						"meu consumo de energia atualmente",
+						"qual o meu consumo corrente",
+						"meu consumo corrente",
+						"qual o meu consumo de energia corrente",
+						"qual o meu consumo agora",
+						"consumo atual",
+						"me fale meu consumo atual",
+						"me fala o consumo atual"
+					]
+				},
+				{
+					"name": "CurrentConsumptionValueIntent",
+					"samples": [
+						"quanto estou gastante de energia elétrica",
+						"quanto estou gastanto esse mês",
+						"quanto gastei",
+						"consumo em reais",
+						"minha conta de energia",
+						"minha conta de energia esse mês",
+						"minha conta esse mês",
+						"qual o valor da minha conta",
+						"qual o valor da minha conta esse mês"
+					]
+				},
+				{
+					"name": "CurrentDevicesOnIntent",
+					"samples": [
+						"quais aparelhos estão ligados",
+						"o que está ligado",
+						"me fale quais aparelhos estão ligados",
+						"qual dispositivo está ligado",
+						"quais dispositivos estão ligados",
+						"quais eletrodomésticos estão ligados",
+						"eletrodomésticos ligados agora"
+					]
+				},
+				{
+					"name": "LastMonthSpentIntent",
+					"samples": [
+						"quanto eu gastei mês passado",
+						"quando eu gastei de energia elétrica mês passado",
+						"quanto gastei esse mês de energia mês passado",
+						"gasto do mês passado",
+						"valor mês passado"
+					]
+				},
+				{
+					"name": "NextMonthSpend",
+					"samples": [
+						"quanto irei gastar de energia elétrica mês que vem",
+						"quanto irei gastar de energia elétrica próximo mês",
+						"quanto vou gastar de energia elétrica mês que vem",
+						"quanto vou gastar de energia elétrica mês que vem",
+						"quanto vou gastar de energia mês que vem",
+						"quanto vou gastar mês que vem",
+						"quanto vou gastar próximo mês",
+						"quanto irei gastar próximo mês",
+						"gasto do mês que vem",
+						"quanto irei gastar mês que vem"
+					]
+				},
+				{
+					"name": "TipsIntent",
+					"samples": [
+						"me fale dicas para diminuir meu consumo",
+						"me dê dicas para diminuir meu consumo",
+						"me dê dicas de como posso diminuir meu consumo",
+						"me fale como posso diminuir meu consumo de energia",
+						"como posso diminuir meu consumo",
+						"como posso diminuir meu consumo de energia elétrica",
+						"como posso diminuir minha conta de luz"
+					]
+				},
+				{
+					"name": "DevicesConsumptionIntent",
+					"samples": [
+						"quais são os eletrodomésticos que mais gastam na minha casa",
+						"quais eletrodomésticos que mais gastam",
+						"quais dispositivos que mais gastam",
+						"eletrodomésticos que mais gastam",
+						"me fale quais aparelhos mais gastam",
+						"me fale os eletrodomésticos que mais gastam",
+						"aparelhos que mais gastam",
+						"quais aparelhos mais gastam"
+					]
+				},
+				{
+					"name": "AMAZON.CancelIntent",
+					"samples": []
+				},
+				{
+					"name": "AMAZON.HelpIntent",
+					"samples": [
+						"ajuda",
+						"me ajude",
+						"opções",
+						"me mostre as opções",
+						"me fale as opções",
+						"o que eu posso saber",
+						"o que você pode me informar",
+						"o que eu posso perguntar",
+						"O que você pode fazer"
+					]
+				},
+				{
+					"name": "AMAZON.StopIntent",
+					"samples": []
+				},
+				{
+					"name": "AMAZON.NoIntent",
+					"samples": [
+						"não",
+						"fechar",
+						"sair",
+						"encerrar",
+						"somente isso",
+						"nada"
+					]
+				}
+			]
+		}
+	}
+}

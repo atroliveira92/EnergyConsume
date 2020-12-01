@@ -1,0 +1,5 @@
+{
+	"name": "CurrentConsumptionValueIntent",
+	"auto": true,
+	"webhookUsed": true
+}
