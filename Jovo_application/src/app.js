@@ -78,12 +78,12 @@ app.setHandler({
     var response = await getCurrentConsumption(userId);
     console.log('Request response '+response);
     if (response == null) {
-      this.ask('Ainda não foi possível coletar informações do seu consumo de energia. Tente me perguntar de novo daqui a uma hora', defaulReprompt);  
+      this.tell('Ainda não foi possível coletar informações do seu consumo de energia. Tente me perguntar de novo daqui a uma hora');  
     } else if (response.hasOwnProperty('message')) {
-        this.ask(response['message'], defaulReprompt);
+        this.tell(response['message']);
     } else {
       let consumption = response.consuption;
-      this.ask('O seu consumo atual desse mês é de ' + consumption + ' watts de energia. Algo mais?', 'Gostaria de me fazer outra pergunta?');
+      this.ask('O seu consumo nesse momento é de ' + consumption + ' watts de energia. Algo mais?', 'Gostaria de me fazer outra pergunta?');
     }
   },
 
@@ -105,7 +105,7 @@ app.setHandler({
       if (response == null) {
         this.ask(defaultMessage, defaulReprompt);
       } else if (response.hasOwnProperty('message')) {
-        this.ask(response.message);
+        this.tell(response.message);
       } else if (response == null || !response.hasOwnProperty('price')) {
         this.ask('Desculpe, não foi possível carregar informações de seu consumo esse mês. Pode tentar novamente ou me fazer outra pergunta?', 'Pode me perguntar novamente');
       } else {
@@ -135,7 +135,7 @@ app.setHandler({
         this.ask('Não foi possível encontrar aparelhos ligados no momento. Pode me perguntar outra coisa?', 'Gostaria de me fazer outra pergunta?');
 
     } else if (response.hasOwnProperty('message')) {
-        this.ask(response['message'], 'Gostaria de me fazer outra pergunta?');
+        this.this(response['message']);
     } else {
       let devicesResponse = response.home_appliances;
       if (devicesResponse.length > 5) {
@@ -273,7 +273,7 @@ app.setHandler({
       this.ask('Não foi possível encontrar aparelhos ligados no momento. Quer me perguntar outra coisa?', 'Gostaria de me perguntar algo mais?');
 
     } else if (response.hasOwnProperty('message')) {
-      this.ask(response['message']);
+      this.tell(response['message']);
     } else {
       var endPos = 5;
       if (response.home_appliances.length < 5) {

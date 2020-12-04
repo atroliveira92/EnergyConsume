@@ -13,6 +13,10 @@ module.exports = {
     'AMAZON.StopIntent': 'StopIntent',
     'AMAZON.CancelIntent': 'StopIntent'
   },
+  
+  intentsToSkipUnhandled: [
+    'END', 'StopIntent'
+  ],
 
   db: {
     FileDb: {

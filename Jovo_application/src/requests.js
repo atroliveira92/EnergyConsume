@@ -1,6 +1,6 @@
 const requestPromise = require('request-promise-native');
 
-const REQUEST_PATH = 'https://moaci-backend.herokuapp.com';
+const REQUEST_PATH = 'https://consumodeenergia.herokuapp.com/';
 
 module.exports.getTipsForEnergyComsumption = async () => {
  
