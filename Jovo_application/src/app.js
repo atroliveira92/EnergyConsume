@@ -83,7 +83,7 @@ app.setHandler({
         this.tell(response['message']);
     } else {
       let consumption = response.consuption;
-      this.ask('O seu consumo nesse momento é de ' + consumption + ' watts de energia. Algo mais?', 'Gostaria de me fazer outra pergunta?');
+      this.ask('O seu consumo nesse momento é de ' + consumption + ' watts de energia. O que mais gostaria de perguntar?', 'Gostaria de me fazer outra pergunta?');
     }
   },
 
@@ -115,7 +115,7 @@ app.setHandler({
 
     } catch(error) {
         console.log(error);
-        this.ask('Desculpe, ocorreu um erro ao carregar informações sobre data e hora. Pode perguntar novamente ou me perguntar algo mais?', 'Pode perguntar novamente?');
+        this.ask('Desculpe, ocorreu um erro ao carregar informações sobre data e hora. Pode perguntar novamente ou me fazer outra pergunta?', 'Pode perguntar novamente?');
     }
   },
 
@@ -143,8 +143,7 @@ app.setHandler({
         this.$session.$data.devices = devicesResponse;
         this.$session.$data.position = 5;
 
-        this.followUpState('CurrentDevicesOnState')
-        .ask('Estão ligados no momento '+ devices + '. Gostaria de ouvir mais?', reprompt);
+        this.followUpState('CurrentDevicesOnState').ask('Estão ligados no momento '+ devices + '. Quer ouvir mais?', reprompt);
       } else {
         let devices = getDevicesByPosition(devicesResponse, 0, devicesResponse.length);
           if (devicesResponse.length == 1) {
@@ -288,11 +287,15 @@ app.setHandler({
   },
 
   Unhandled() {
-    this.ask('Não consegui compreender o que perguntou. Pode tentar novamente?', 'Pode repetir a pergunta?');
+    this.ask('Não entendi. Pode me perguntar de novo? Caso tenha dúvida você pode falar ajuda', 'Pode repetir a pergunta?');
   },
 
   NoIntent() {
     this.tell('Tudo bem, até logo.');
+  },
+
+  YesIntent() {
+    this.ask('O que você gostaria de saber? Caso não saiba pode falar ajuda', 'O que gostaria de saber?');
   },
 
   HelpIntent() {
