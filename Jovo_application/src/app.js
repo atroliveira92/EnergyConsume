@@ -45,7 +45,7 @@ app.setHandler({
     if (!this.$request.getAccessToken()) {
       this.$alexaSkill.showAccountLinkingCard();
       console.log('MY LOG --> Não tem access token')
-      this.tell('Por favor, realize o login');
+      this.tell('Para usar essa skill, faça o login abrindo o aplicativo da Alexa e clique no link para se conectar. Você pode também clicar em Configurações da Skill e clicar em Vincular Conta');
     } else {
       const token = this.$request.getAccessToken();
         // API request
