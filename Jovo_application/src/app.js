@@ -49,7 +49,7 @@ app.setHandler({
     } else {
       const token = this.$request.getAccessToken();
         // API request
-        const { data } = await HttpService.get('https://dev-qd-kqcj9.us.auth0.com/userinfo', {
+        const { data } = await HttpService.get('https://consumodeenergia.us.auth0.com/userinfo', {
             headers: {
                 authorization: 'Bearer ' + token,
             },
@@ -185,10 +185,11 @@ app.setHandler({
         }
     },
     NoIntent() {
-        this.$session.$data.devices = null;
-        this.$session.$data.position = 0;
-        this.tell('Tudo bem. até mais');
+      this.$session.$data.devices = null;
+      this.$session.$data.position = 0;
+      this.tell('Tudo bem. Até mais');
     },
+
     Unhandled() {
       this.followUpState('CurrentDevicesOnState')
                 .ask('Você deve dizer sim ou não.', 'Por favor, diga sim ou não');
@@ -301,7 +302,7 @@ app.setHandler({
   },
 
   StopIntent() {
-    this.tell("Ok. Até mais.")
+    this.tell("Tudo bem. Até logo.")
   },
 
   END() {

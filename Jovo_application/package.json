@@ -8,7 +8,9 @@
     "jovo-framework": "^3.2.0",
     "jovo-platform-alexa": "^3.0.15",
     "jovo-platform-googleassistant": "^3.0.15",
-    "jovo-plugin-debugger": "^3.0.14"
+    "jovo-plugin-debugger": "^3.0.14",
+    "request": "^2.88.2",
+    "request-promise-native": "^1.0.9"
   },
   "devDependencies": {
     "gulp": "^4.0.2",
@@ -33,5 +35,9 @@
   "bugs": {
     "url": "https://github.com/jovotech/jovo-sample-voice-app-nodejs/issues"
   },
-  "homepage": "https://github.com/jovotech/jovo-sample-voice-app-nodejs#readme"
+  "homepage": "https://github.com/jovotech/jovo-sample-voice-app-nodejs#readme",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": []
 }

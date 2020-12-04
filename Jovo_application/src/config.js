@@ -11,6 +11,7 @@ module.exports = {
     'AMAZON.NoIntent': 'NoIntent',
     'AMAZON.HelpIntent': 'HelpIntent',
     'AMAZON.StopIntent': 'StopIntent',
+    'AMAZON.CancelIntent': 'StopIntent'
   },
 
   db: {

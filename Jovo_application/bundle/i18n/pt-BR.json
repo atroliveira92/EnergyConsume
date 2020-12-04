@@ -1,0 +1,8 @@
+{
+    "translation": {
+      "HELLO_WORLD_WHATS_YOUR_NAME": "Olá Mundo! Qual o seu nome?",
+      "PLEASE_TELL_YOUR_NAME": "Por favor fale seu nome.",
+      "HEY_S_NICE_TO_MEET_YOU": "Olá {{name}}, prazer em conhecê-lo",
+      "PLEASE_LINK_YOUR_ACCOUNT": "Por favor, entre com sua conta"
+    }
+}
