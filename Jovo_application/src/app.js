@@ -258,7 +258,7 @@ app.setHandler({
 
     var response = await getTipsForEnergyComsumption(userId);
     if (response != null && response != '') {
-      this.ask(response.title + '. ' + response.detail, 'Gostaria de me perguntar algo mais?');
+      this.tell(response.title + '. ' + response.detail, 'Gostaria de me perguntar algo mais?');
     } else {
       this.ask('Houve um problema para carregar sua dica. Pode tentar novamente?', 'Pode tentar novamente?');
     }
